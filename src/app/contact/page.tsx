@@ -2,6 +2,7 @@
 
 import { useLanguage } from '@/lib/context/language';
 import { FaGithub, FaLinkedin, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 
 export default function ContactPage() {
   const { language } = useLanguage();
@@ -10,7 +11,7 @@ export default function ContactPage() {
     tr: {
       title: 'İletişim',
       description: 'Benimle iletişime geçmek için aşağıdaki kanalları kullanabilirsiniz.',
-      location: 'Konya, Türkiye',
+      location: 'Türkiye',
       email: 'E-posta',
       social: 'Sosyal Medya',
       message: 'Mesaj Gönder',
@@ -27,7 +28,7 @@ export default function ContactPage() {
     en: {
       title: 'Contact',
       description: 'You can use the following channels to get in touch with me.',
-      location: 'Konya, Turkey',
+      location: 'Turkey',
       email: 'Email',
       social: 'Social Media',
       message: 'Send Message',
@@ -49,18 +50,33 @@ export default function ContactPage() {
   };
 
   return (
-    <main className="container mx-auto px-4 py-8">
+    <motion.main 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 20 }}
+      transition={{ duration: 0.5 }}
+      className="container mx-auto px-4 py-8"
+    >
       <div className="max-w-4xl mx-auto space-y-12">
-        <div className="space-y-6">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+          className="space-y-6"
+        >
           <h1 className="text-4xl font-bold text-center md:text-left">{content[language].title}</h1>
           <p className="text-lg text-muted-foreground text-center md:text-justify">
             {content[language].description}
           </p>
-        </div>
+        </motion.div>
 
         <div className="grid md:grid-cols-2 gap-8">
-          {/* İletişim Bilgileri */}
-          <div className="space-y-8">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+            className="space-y-8"
+          >
             <div className="space-y-6">
               <h2 className="text-2xl font-semibold">{content[language].email}</h2>
               <a
@@ -99,10 +115,14 @@ export default function ContactPage() {
                 </a>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          {/* İletişim Formu */}
-          <div className="space-y-6">
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+            className="space-y-6"
+          >
             <h2 className="text-2xl font-semibold">{content[language].message}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -144,16 +164,18 @@ export default function ContactPage() {
                   required
                 />
               </div>
-              <button
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 type="submit"
                 className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
               >
                 {content[language].form.send}
-              </button>
+              </motion.button>
             </form>
-          </div>
+          </motion.div>
         </div>
       </div>
-    </main>
+    </motion.main>
   );
 } 
