@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useLanguage } from '@/lib/context/language';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -22,13 +22,17 @@ interface FormData extends Omit<Project, 'technologies'> {
 
 interface EditProjectFormProps {
   id: string;
+  initialData: Project;
 }
 
-export default function EditProjectForm({ id }: EditProjectFormProps) {
+export default function EditProjectForm({ id, initialData }: EditProjectFormProps) {
   const { language } = useLanguage();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<FormData | null>(null);
+  const [formData, setFormData] = useState<FormData>({
+    ...initialData,
+    technologies: initialData.technologies.join(', ')
+  });
 
   const content = useMemo(() => ({
     tr: {
@@ -45,8 +49,6 @@ export default function EditProjectForm({ id }: EditProjectFormProps) {
         submitting: 'Kaydediliyor...'
       },
       messages: {
-        fetchSuccess: 'Proje başarıyla yüklendi',
-        fetchError: 'Proje yüklenirken bir hata oluştu',
         updateSuccess: 'Proje başarıyla güncellendi',
         updateError: 'Proje güncellenirken bir hata oluştu'
       }
@@ -65,41 +67,11 @@ export default function EditProjectForm({ id }: EditProjectFormProps) {
         submitting: 'Saving...'
       },
       messages: {
-        fetchSuccess: 'Project loaded successfully',
-        fetchError: 'An error occurred while loading the project',
         updateSuccess: 'Project updated successfully',
         updateError: 'An error occurred while updating the project'
       }
     }
   }), []);
-
-  const fetchProject = useCallback(async () => {
-    try {
-      const response = await fetch(`/api/projects/${id}`);
-      if (!response.ok) {
-        throw new Error('Proje yüklenirken hata oluştu');
-      }
-      
-      const project = await response.json();
-      if (project.error) {
-        throw new Error(project.error);
-      }
-
-      setFormData({
-        ...project,
-        technologies: project.technologies.join(', ')
-      });
-      toast.success(content[language].messages.fetchSuccess);
-    } catch (error) {
-      console.error('Proje yüklenirken hata oluştu:', error);
-      toast.error(content[language].messages.fetchError);
-      router.push('/admin/projects');
-    }
-  }, [id, language, router, content]);
-
-  useEffect(() => {
-    fetchProject();
-  }, [fetchProject]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -134,29 +106,12 @@ export default function EditProjectForm({ id }: EditProjectFormProps) {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    if (!formData) return;
-
     const { name, value, type } = e.target;
-    setFormData(prev => {
-      if (!prev) return null;
-      return {
-        ...prev,
-        [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
-      };
-    });
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+    }));
   };
-
-  if (!formData) {
-    return (
-      <main className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-16">
-          <div className="text-center">
-            Proje yükleniyor...
-          </div>
-        </div>
-      </main>
-    );
-  }
 
   return (
     <main className="min-h-screen bg-background">
