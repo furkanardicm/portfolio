@@ -36,31 +36,25 @@ const technologies = [
   }
 ];
 
-export default function Skills() {
+export default function AboutSkills() {
   return (
-    <div className="space-y-12">
-      <h2 className="text-2xl font-bold text-center md:text-left mb-8">Teknolojiler</h2>
-      <div className="grid gap-8 md:gap-12">
-        {technologies.map((category) => (
-          <div key={category.category} className="space-y-4">
-            <h3 className="text-xl font-semibold text-foreground border-b pb-2">{category.category}</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              {category.items.map((tech) => (
-                <div
-                  key={tech.name}
-                  className="flex items-center gap-3 p-4 rounded-lg bg-card hover:bg-accent transition-colors group"
-                >
-                  <tech.icon className={cn(
-                    "w-6 h-6 transition-transform group-hover:scale-110",
-                    tech.color
-                  )} />
-                  <span className="text-sm font-medium text-foreground whitespace-nowrap">{tech.name}</span>
-                </div>
-              ))}
-            </div>
+    <div className="space-y-8">
+      {technologies.map((category) => (
+        <div key={category.category} className="space-y-4">
+          <h3 className="text-xl font-semibold text-foreground">{category.category}</h3>
+          <div className="flex flex-wrap gap-3">
+            {category.items.map((tech) => (
+              <div
+                key={tech.name}
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent text-accent-foreground hover:bg-accent/80 transition-colors"
+              >
+                <tech.icon className={cn("w-4 h-4", tech.color)} />
+                <span className="text-sm font-medium whitespace-nowrap">{tech.name}</span>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   );
 } 
