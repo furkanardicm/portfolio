@@ -5,14 +5,21 @@ import { useLanguage } from '@/lib/context/language';
 import { useTheme } from 'next-themes';
 import { FaSun, FaMoon } from 'react-icons/fa';
 import { Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import LanguageToggle from '../ui/LanguageToggle';
 import { cn } from '@/lib/utils';
+import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
   const { language } = useLanguage();
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, systemTheme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const content = {
     tr: {
@@ -39,6 +46,15 @@ export default function Navbar() {
     { href: '/contact', label: content[language].contact },
   ];
 
+  const isActive = (href: string) => {
+    if (href === '/') {
+      return pathname === href;
+    }
+    return pathname.startsWith(href);
+  };
+
+  const currentTheme = theme === 'system' ? systemTheme : theme;
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center">
@@ -57,7 +73,10 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-foreground hover:text-primary transition-colors"
+                className={cn(
+                  "text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md",
+                  isActive(link.href) && "bg-muted text-primary"
+                )}
               >
                 {link.label}
               </Link>
@@ -75,7 +94,10 @@ export default function Navbar() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setIsOpen(false)}
-                  className="text-xl font-medium text-foreground hover:text-primary transition-colors"
+                  className={cn(
+                    "text-xl font-medium text-foreground hover:text-primary transition-colors px-4 py-2 rounded-md",
+                    isActive(link.href) && "bg-muted text-primary"
+                  )}
                 >
                   {link.label}
                 </Link>
@@ -85,12 +107,14 @@ export default function Navbar() {
 
           <div className="flex items-center gap-4">
             <LanguageToggle />
-            <button
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="text-foreground hover:text-primary transition-colors"
-            >
-              {theme === 'dark' ? <FaSun className="w-5 h-5" /> : <FaMoon className="w-5 h-5" />}
-            </button>
+            {mounted && (
+              <button
+                onClick={() => setTheme(currentTheme === 'dark' ? 'light' : 'dark')}
+                className="text-foreground hover:text-primary transition-colors"
+              >
+                {currentTheme === 'dark' ? <FaSun className="w-5 h-5" /> : <FaMoon className="w-5 h-5" />}
+              </button>
+            )}
           </div>
         </nav>
       </div>

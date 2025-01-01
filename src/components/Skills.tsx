@@ -1,81 +1,60 @@
 'use client';
 
-import { useEffect, useState, useMemo, useCallback } from 'react';
-import { useLanguage } from '@/lib/context/language';
-import { ISkillCategory } from '@/lib/models/Skill';
-import * as Icons from 'react-icons/fa';
-import * as SiIcons from 'react-icons/si';
+import { FaReact, FaNodeJs, FaGitAlt, FaGithub, FaPython } from 'react-icons/fa';
+import { SiNextdotjs, SiExpress, SiTailwindcss, SiJavascript, SiTypescript, SiMongodb, SiMysql, SiHtml5, SiCss3 } from 'react-icons/si';
+import { cn } from '@/lib/utils';
+
+const technologies = [
+  {
+    category: "Frontend",
+    items: [
+      { name: "React.js", icon: FaReact, color: "text-[#61DAFB]" },
+      { name: "Next.js", icon: SiNextdotjs, color: "text-foreground" },
+      { name: "JavaScript", icon: SiJavascript, color: "text-[#F7DF1E]" },
+      { name: "TypeScript", icon: SiTypescript, color: "text-[#3178C6]" },
+      { name: "HTML5", icon: SiHtml5, color: "text-[#E34F26]" },
+      { name: "CSS3", icon: SiCss3, color: "text-[#1572B6]" },
+      { name: "Tailwind CSS", icon: SiTailwindcss, color: "text-[#06B6D4]" },
+    ]
+  },
+  {
+    category: "Backend",
+    items: [
+      { name: "Node.js", icon: FaNodeJs, color: "text-[#339933]" },
+      { name: "Express.js", icon: SiExpress, color: "text-foreground" },
+      { name: "Python", icon: FaPython, color: "text-[#3776AB]" },
+      { name: "MongoDB", icon: SiMongodb, color: "text-[#47A248]" },
+      { name: "MySQL", icon: SiMysql, color: "text-[#4479A1]" },
+    ]
+  },
+  {
+    category: "Araçlar",
+    items: [
+      { name: "Git", icon: FaGitAlt, color: "text-[#F05032]" },
+      { name: "GitHub", icon: FaGithub, color: "text-foreground" },
+    ]
+  }
+];
 
 export default function Skills() {
-  const { language } = useLanguage();
-  const [skills, setSkills] = useState<ISkillCategory[]>([]);
-  const [error, setError] = useState<string | null>(null);
-
-  const content = useMemo(() => ({
-    tr: {
-      title: 'Yetenekler',
-      error: 'Yetenekler yüklenirken bir hata oluştu'
-    },
-    en: {
-      title: 'Skills',
-      error: 'An error occurred while loading skills'
-    }
-  }), []);
-
-  const fetchSkills = useCallback(async () => {
-    try {
-      const response = await fetch('/api/skills');
-      if (!response.ok) {
-        throw new Error('Failed to fetch skills');
-      }
-      const data = await response.json();
-      setSkills(data);
-    } catch (err) {
-      console.error('Error fetching skills:', err);
-      setError(content[language].error);
-    }
-  }, [language, content]);
-
-  useEffect(() => {
-    fetchSkills();
-  }, [fetchSkills]);
-
-  const getIcon = (iconName: string) => {
-    // @ts-expect-error - Dynamic icon import from react-icons/fa
-    const FaIcon = Icons[iconName];
-    // @ts-expect-error - Dynamic icon import from react-icons/si
-    const SiIcon = SiIcons[iconName];
-    const Icon = FaIcon || SiIcon;
-    
-    return Icon ? <Icon className="w-6 h-6" /> : null;
-  };
-
-  if (error) {
-    return (
-      <div className="text-center text-destructive py-8">
-        {error}
-      </div>
-    );
-  }
-
   return (
-    <div className="w-full">
-      <h2 className="text-2xl font-bold mb-6 text-center md:text-left">{content[language].title}</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {skills.map((category) => (
-          <div key={category._id} className="bg-card rounded-lg p-6">
-            <h3 className="text-xl font-semibold mb-4">{category.category}</h3>
-            <div className="grid grid-cols-2 gap-4">
-              {category.skills.map((skill, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  {getIcon(skill.icon)}
-                  <span>{skill.name}</span>
-                </div>
-              ))}
-            </div>
+    <div className="space-y-8">
+      {technologies.map((category) => (
+        <div key={category.category} className="space-y-4">
+          <h3 className="text-xl font-semibold text-foreground">{category.category}</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {category.items.map((tech) => (
+              <div
+                key={tech.name}
+                className="flex items-center gap-2 p-3 rounded-lg bg-card hover:bg-card/80 transition-colors"
+              >
+                <tech.icon className={cn("w-5 h-5", tech.color)} />
+                <span className="text-sm font-medium text-foreground">{tech.name}</span>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   );
 } 

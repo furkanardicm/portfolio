@@ -28,6 +28,7 @@ export default async function RootLayout({
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
+          storageKey="portfolio-theme"
         >
           <LanguageProvider>
             {!isAdminPage && <Navbar />}
