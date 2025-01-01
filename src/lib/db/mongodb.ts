@@ -1,10 +1,12 @@
 import mongoose from 'mongoose';
 
-declare global {
-  var mongoose: {
-    conn: typeof mongoose | null;
-    promise: Promise<typeof mongoose> | null;
-  };
+interface GlobalMongoose {
+  conn: typeof mongoose | null;
+  promise: Promise<typeof mongoose> | null;
+}
+
+interface CustomGlobal extends Global {
+  mongoose?: GlobalMongoose;
 }
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/portfolio';
@@ -13,10 +15,10 @@ if (!MONGODB_URI) {
   throw new Error('MongoDB URI is not defined');
 }
 
-let cached = global.mongoose;
+const cached: GlobalMongoose = (global as CustomGlobal).mongoose ?? { conn: null, promise: null };
 
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
+if (!(global as CustomGlobal).mongoose) {
+  (global as CustomGlobal).mongoose = cached;
 }
 
 async function connectDB() {

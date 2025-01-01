@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useLanguage } from '@/lib/context/language';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -26,35 +26,7 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData | null>(null);
 
-  useEffect(() => {
-    fetchProject();
-  }, [params.id]);
-
-  const fetchProject = async () => {
-    try {
-      const response = await fetch(`/api/projects/${params.id}`);
-      if (!response.ok) {
-        throw new Error('Proje yüklenirken hata oluştu');
-      }
-      
-      const project = await response.json();
-      if (project.error) {
-        throw new Error(project.error);
-      }
-
-      setFormData({
-        ...project,
-        technologies: project.technologies.join(', ')
-      });
-      toast.success(content[language].messages.fetchSuccess);
-    } catch (error) {
-      console.error('Proje yüklenirken hata oluştu:', error);
-      toast.error(content[language].messages.fetchError);
-      router.push('/admin/projects');
-    }
-  };
-
-  const content = {
+  const content = useMemo(() => ({
     tr: {
       title: 'Projeyi Düzenle',
       form: {
@@ -95,7 +67,35 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
         updateError: 'An error occurred while updating the project'
       }
     }
-  };
+  }), []);
+
+  const fetchProject = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/projects/${params.id}`);
+      if (!response.ok) {
+        throw new Error('Proje yüklenirken hata oluştu');
+      }
+      
+      const project = await response.json();
+      if (project.error) {
+        throw new Error(project.error);
+      }
+
+      setFormData({
+        ...project,
+        technologies: project.technologies.join(', ')
+      });
+      toast.success(content[language].messages.fetchSuccess);
+    } catch (error) {
+      console.error('Proje yüklenirken hata oluştu:', error);
+      toast.error(content[language].messages.fetchError);
+      router.push('/admin/projects');
+    }
+  }, [params.id, language, router, content]);
+
+  useEffect(() => {
+    fetchProject();
+  }, [fetchProject]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

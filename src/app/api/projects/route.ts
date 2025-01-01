@@ -8,7 +8,7 @@ export async function GET() {
     const db = client.db("portfolio");
     const projects = await db.collection("projects").find({}).toArray();
     return NextResponse.json(projects);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Projeler yüklenirken hata oluştu" }, { status: 500 });
   }
 }
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ success: true, id: result.insertedId });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Proje eklenirken hata oluştu" }, { status: 500 });
   }
 }
@@ -49,7 +49,7 @@ export async function PUT(request: Request) {
     );
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Proje güncellenirken hata oluştu" }, { status: 500 });
   }
 }
@@ -69,7 +69,7 @@ export async function DELETE(request: Request) {
     await db.collection("projects").deleteOne({ _id: new ObjectId(id) });
     
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Proje silinirken hata oluştu" }, { status: 500 });
   }
 } 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useLanguage } from '@/lib/context/language';
 import { ISkillCategory } from '@/lib/models/Skill';
 import * as Icons from 'react-icons/fa';
@@ -9,41 +9,41 @@ import * as SiIcons from 'react-icons/si';
 export default function Skills() {
   const { language } = useLanguage();
   const [skills, setSkills] = useState<ISkillCategory[]>([]);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
-  const content = {
+  const content = useMemo(() => ({
     tr: {
-      title: 'Teknoloji Yığını',
-      error: 'Yetenekler yüklenirken bir hata oluştu.'
+      title: 'Yetenekler',
+      error: 'Yetenekler yüklenirken bir hata oluştu'
     },
     en: {
-      title: 'Tech Stack',
-      error: 'An error occurred while loading skills.'
+      title: 'Skills',
+      error: 'An error occurred while loading skills'
     }
-  };
+  }), []);
+
+  const fetchSkills = useCallback(async () => {
+    try {
+      const response = await fetch('/api/skills');
+      if (!response.ok) {
+        throw new Error('Failed to fetch skills');
+      }
+      const data = await response.json();
+      setSkills(data);
+    } catch (err) {
+      console.error('Error fetching skills:', err);
+      setError(content[language].error);
+    }
+  }, [language, content]);
 
   useEffect(() => {
-    const fetchSkills = async () => {
-      try {
-        const response = await fetch('/api/skills');
-        if (!response.ok) {
-          throw new Error('Failed to fetch skills');
-        }
-        const data = await response.json();
-        setSkills(data);
-      } catch (err) {
-        console.error('Error fetching skills:', err);
-        setError(content[language].error);
-      }
-    };
-
     fetchSkills();
-  }, [language]);
+  }, [fetchSkills]);
 
   const getIcon = (iconName: string) => {
-    // @ts-ignore
+    // @ts-expect-error - Dynamic icon import from react-icons/fa
     const FaIcon = Icons[iconName];
-    // @ts-ignore
+    // @ts-expect-error - Dynamic icon import from react-icons/si
     const SiIcon = SiIcons[iconName];
     const Icon = FaIcon || SiIcon;
     

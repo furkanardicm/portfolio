@@ -79,12 +79,11 @@ const mockPosts: BlogPost[] = [
 interface GetPostsParams {
   page?: number;
   limit?: number;
-  lang?: string;
 }
 
 export const blogService = {
   // Tüm blog yazılarını getir
-  getPosts: async ({ page = 1, limit = 10, lang }: GetPostsParams = {}) => {
+  getPosts: async ({ page = 1, limit = 10 }: GetPostsParams = {}) => {
     try {
       // API çağrısı simülasyonu
       await new Promise(resolve => setTimeout(resolve, 1000));

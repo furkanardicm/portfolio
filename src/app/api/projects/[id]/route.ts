@@ -58,13 +58,19 @@ export async function PUT(
     const db = client.db("portfolio");
     const data = await request.json();
 
-    const { _id, ...updateData } = data;
+    const { title, description, technologies, githubUrl, liveUrl, featured, order } = data;
 
     const result = await db.collection("projects").updateOne(
       { _id: new ObjectId(id) },
       { 
         $set: {
-          ...updateData,
+          title,
+          description,
+          technologies,
+          githubUrl,
+          liveUrl,
+          featured,
+          order,
           updatedAt: new Date()
         }
       }

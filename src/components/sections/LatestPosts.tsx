@@ -1,52 +1,55 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useLanguage } from '@/lib/context';
 import { BlogPost } from '@/types/models';
 import { blogService } from '@/lib/api/services';
 import { PostCard } from '../ui/PostCard';
 
-export function LatestPosts() {
+export default function LatestPosts() {
   const { language } = useLanguage();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const content = useMemo(() => ({
+    tr: {
+      title: 'Son Yazılar',
+      error: 'Yazılar yüklenirken bir hata oluştu.',
+      loading: 'Yazılar yükleniyor...'
+    },
+    en: {
+      title: 'Latest Posts',
+      error: 'An error occurred while loading posts.',
+      loading: 'Loading posts...'
+    }
+  }), []);
+
+  const fetchPosts = useCallback(async () => {
+    try {
+      const { data } = await blogService.getPosts({
+        limit: 3,
+        page: 1
+      });
+      setPosts(data);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+      setError(content[language].error);
+    } finally {
+      setLoading(false);
+    }
+  }, [language, content]);
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await blogService.getPosts({
-          page: 1,
-          limit: 3,
-          lang: language,
-        });
-        if (response.data) {
-          setPosts(response.data);
-        }
-      } catch (error) {
-        console.error('Error fetching posts:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchPosts();
-  }, [language]);
+  }, [fetchPosts]);
 
   if (loading) {
-    return (
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[...Array(3)].map((_, i) => (
-              <div
-                key={i}
-                className="h-[300px] rounded-lg bg-accent/10 animate-pulse"
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-    );
+    return <div className="text-center py-8">{content[language].loading}</div>;
+  }
+
+  if (error) {
+    return <div className="text-center text-destructive py-8">{error}</div>;
   }
 
   if (posts.length === 0) {

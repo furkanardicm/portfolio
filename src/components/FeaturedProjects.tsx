@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useLanguage } from '@/lib/context/language';
 import { IProject } from '@/lib/models/Project';
 import ProjectCard from './ProjectCard';
@@ -8,9 +8,9 @@ import ProjectCard from './ProjectCard';
 export default function FeaturedProjects() {
   const { language } = useLanguage();
   const [projects, setProjects] = useState<IProject[]>([]);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
-  const content = {
+  const content = useMemo(() => ({
     tr: {
       title: 'Öne Çıkan Projeler',
       error: 'Projeler yüklenirken bir hata oluştu.',
@@ -21,25 +21,29 @@ export default function FeaturedProjects() {
       error: 'An error occurred while loading projects.',
       viewAll: 'View All Projects'
     }
-  };
+  }), []);
+
+  const filteredProjects = useMemo(() => {
+    return projects.filter(project => project.featured);
+  }, [projects]);
+
+  const fetchProjects = useCallback(async () => {
+    try {
+      const response = await fetch('/api/projects');
+      if (!response.ok) {
+        throw new Error('Failed to fetch projects');
+      }
+      const data = await response.json();
+      setProjects(data);
+    } catch (err) {
+      console.error('Error fetching projects:', err);
+      setError(content[language].error);
+    }
+  }, [language, content]);
 
   useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const response = await fetch('/api/projects');
-        if (!response.ok) {
-          throw new Error('Failed to fetch projects');
-        }
-        const data = await response.json();
-        setProjects(data.filter((project: IProject) => project.featured));
-      } catch (err) {
-        console.error('Error fetching projects:', err);
-        setError(content[language].error);
-      }
-    };
-
     fetchProjects();
-  }, [language]);
+  }, [fetchProjects]);
 
   if (error) {
     return (
@@ -54,7 +58,7 @@ export default function FeaturedProjects() {
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold mb-8">{content[language].title}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((project) => (
+          {filteredProjects.map((project) => (
             <ProjectCard key={project._id?.toString()} project={project} />
           ))}
         </div>

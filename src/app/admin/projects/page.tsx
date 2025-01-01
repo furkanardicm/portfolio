@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useLanguage } from '@/lib/context/language';
 import Link from 'next/link';
 import { toast } from 'sonner';
@@ -33,30 +33,9 @@ export default function AdminProjectsPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
 
-  useEffect(() => {
-    fetchProjects();
-  }, []);
-
-  const fetchProjects = async () => {
-    try {
-      const response = await fetch('/api/projects');
-      const data = await response.json();
-      if (data.error) {
-        throw new Error(data.error);
-      }
-      setProjects(data);
-      toast.success(content[language].messages.fetchSuccess);
-    } catch (error) {
-      console.error('Projeler yüklenirken hata oluştu:', error);
-      toast.error(content[language].messages.fetchError);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const content = {
+  const content = useMemo(() => ({
     tr: {
-      title: 'Proje Yönetimi',
+      title: 'Projeler',
       addNew: 'Yeni Proje Ekle',
       table: {
         title: 'Başlık',
@@ -84,7 +63,7 @@ export default function AdminProjectsPage() {
       loading: 'Projeler yükleniyor...'
     },
     en: {
-      title: 'Project Management',
+      title: 'Projects',
       addNew: 'Add New Project',
       table: {
         title: 'Title',
@@ -111,7 +90,26 @@ export default function AdminProjectsPage() {
       noProjects: 'No projects found.',
       loading: 'Loading projects...'
     }
-  };
+  }), []);
+
+  const fetchProjects = useCallback(async () => {
+    try {
+      const response = await fetch('/api/projects');
+      const data = await response.json();
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      setProjects(data);
+    } catch {
+      toast.error(content[language].messages.fetchError);
+    } finally {
+      setLoading(false);
+    }
+  }, [language, content]);
+
+  useEffect(() => {
+    fetchProjects();
+  }, [fetchProjects]);
 
   const handleDeleteClick = (project: Project) => {
     setProjectToDelete(project);

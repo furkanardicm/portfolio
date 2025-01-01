@@ -44,7 +44,7 @@ export default function AdminLoginPage() {
       } else {
         setError(content[language].error);
       }
-    } catch (err) {
+    } catch {
       setError(content[language].error);
     }
   };
