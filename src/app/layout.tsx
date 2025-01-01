@@ -12,8 +12,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const headersList = await headers();
-  const pathname = headersList.get('x-pathname') || '';
-  const isAdminPage = pathname.startsWith('/admin');
+  const isAdminPage = headersList.get('x-is-admin-page') === 'true';
 
   return (
     <html lang="en" suppressHydrationWarning>
