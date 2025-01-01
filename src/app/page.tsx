@@ -37,10 +37,10 @@ export default function Home() {
         <div className="flex flex-col-reverse md:flex-row items-center gap-8 mb-16">
           <div className="flex-1 text-center md:text-left">
             <div className="mb-6">
-              <p className="text-base md:text-xl text-muted-foreground mb-2 text-center md:text-left">{content[language].greeting}</p>
-              <h1 className="text-3xl md:text-5xl font-bold mb-3 md:mb-4 text-center md:text-left">{content[language].name}</h1>
-              <h2 className="text-xl md:text-3xl text-muted-foreground mb-3 md:mb-4 text-center md:text-left">{content[language].title}</h2>
-              <p className="text-base md:text-lg text-muted-foreground leading-relaxed text-center md:text-left">{content[language].description}</p>
+              <p className="text-base md:text-xl text-muted-foreground mb-2 text-center md:text-justify">{content[language].greeting}</p>
+              <h1 className="text-3xl md:text-5xl font-bold mb-3 md:mb-4 text-center md:text-justify">{content[language].name}</h1>
+              <h2 className="text-xl md:text-3xl text-muted-foreground mb-3 md:mb-4 text-center md:text-justify">{content[language].title}</h2>
+              <p className="text-base md:text-lg text-muted-foreground leading-relaxed text-center md:text-justify">{content[language].description}</p>
             </div>
 
             <div className="flex flex-wrap gap-3 md:gap-4 justify-center md:justify-start">

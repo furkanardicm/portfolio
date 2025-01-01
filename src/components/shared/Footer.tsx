@@ -7,14 +7,14 @@ export function Footer() {
     <footer className="border-t bg-background">
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="text-center md:text-left">
-            <h3 className="text-lg font-semibold mb-4">Portfolio</h3>
+          <div className="text-center md:text-justify">
+            <h3 className="text-lg font-semibold mb-4 text-center md:text-justify">Portfolio</h3>
             <p className="text-sm text-muted-foreground">
               Modern ve profesyonel web çözümleri geliştiren full-stack yazılım geliştiricisi.
             </p>
           </div>
-          <div className="text-center md:text-left">
-            <h3 className="text-lg font-semibold mb-4">Bağlantılar</h3>
+          <div className="text-center md:text-justify">
+            <h3 className="text-lg font-semibold mb-4 text-center md:text-justify">Bağlantılar</h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/projects" className="text-sm text-muted-foreground hover:text-primary transition-colors">
@@ -38,8 +38,8 @@ export function Footer() {
               </li>
             </ul>
           </div>
-          <div className="text-center md:text-left">
-            <h3 className="text-lg font-semibold mb-4">Sosyal Medya</h3>
+          <div className="text-center md:text-justify">
+            <h3 className="text-lg font-semibold mb-4 text-center md:text-justify">Sosyal Medya</h3>
             <ul className="space-y-2">
               <li>
                 <a 
@@ -63,8 +63,8 @@ export function Footer() {
               </li>
             </ul>
           </div>
-          <div className="text-center md:text-left">
-            <h3 className="text-lg font-semibold mb-4">İletişim</h3>
+          <div className="text-center md:text-justify">
+            <h3 className="text-lg font-semibold mb-4 text-center md:text-justify">İletişim</h3>
             <ul className="space-y-2">
               <li className="text-sm text-muted-foreground">
                 Email: furkanardcm@gmail.com
