@@ -14,11 +14,15 @@ interface Project {
   order: number;
 }
 
+// Next.js 15'te sayfa parametreleri şu şekilde geliyor:
+// {
+//   params: { id: "123" },
+//   searchParams: {}
+// }
+
 type PageProps = {
-  params: Promise<{
-    id: string;
-  }>;
-  searchParams?: { [key: string]: string | string[] | undefined };
+  params: Promise<{ id: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

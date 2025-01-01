@@ -2,14 +2,15 @@ import { NextResponse } from 'next/server';
 import { getBlogPostById, updateBlogPost, deleteBlogPost } from '@/lib/services/blogService';
 
 interface Props {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export async function GET(request: Request, { params }: Props) {
+  const resolvedParams = await params;
   try {
-    const post = await getBlogPostById(params.id);
+    const post = await getBlogPostById(resolvedParams.id);
     if (!post) {
       return NextResponse.json(
         { error: 'Blog post not found' },
@@ -27,9 +28,10 @@ export async function GET(request: Request, { params }: Props) {
 }
 
 export async function PUT(request: Request, { params }: Props) {
+  const resolvedParams = await params;
   try {
     const data = await request.json();
-    const post = await updateBlogPost(params.id, data);
+    const post = await updateBlogPost(resolvedParams.id, data);
     if (!post) {
       return NextResponse.json(
         { error: 'Blog post not found' },
@@ -47,8 +49,9 @@ export async function PUT(request: Request, { params }: Props) {
 }
 
 export async function DELETE(request: Request, { params }: Props) {
+  const resolvedParams = await params;
   try {
-    const post = await deleteBlogPost(params.id);
+    const post = await deleteBlogPost(resolvedParams.id);
     if (!post) {
       return NextResponse.json(
         { error: 'Blog post not found' },

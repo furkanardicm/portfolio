@@ -2,11 +2,15 @@ import { NextResponse } from 'next/server';
 import clientPromise from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  const id = await params.id;
+interface Props {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
+export async function GET(request: Request, { params }: Props) {
+  const resolvedParams = await params;
+  const id = resolvedParams.id;
 
   if (!id) {
     return NextResponse.json(
@@ -40,11 +44,9 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  const id = await params.id;
+export async function PUT(request: Request, { params }: Props) {
+  const resolvedParams = await params;
+  const id = resolvedParams.id;
 
   if (!id) {
     return NextResponse.json(
