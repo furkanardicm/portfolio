@@ -1,4 +1,4 @@
-import EditProjectForm from './EditProjectForm';
+import EditProjectForm from '@/app/admin/projects/[id]/EditProjectForm';
 
 interface Props {
   params: {
