@@ -69,7 +69,7 @@ export default function Navbar() {
             "fixed inset-0 top-16 bg-background/95 backdrop-blur-sm border-b z-50 lg:hidden",
             isOpen ? "block" : "hidden"
           )}>
-            <div className="flex flex-col items-center gap-6 pt-8">
+            <div className="flex flex-col items-center gap-6 pt-8 bg-background min-h-screen">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}

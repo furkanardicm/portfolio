@@ -41,7 +41,7 @@ export default function AdminLoginPage() {
     setIsLoading(true);
 
     try {
-      if (email === 'furkanardcm@gmail.com' && password === 'admin123') {
+      if (email === 'admin@portfolio.com' && password === 'Portfolio2025!') {
         const token = btoa(email + ':' + new Date().getTime());
         Cookies.set('token', token, { expires: 7 });
         router.push('/admin');
