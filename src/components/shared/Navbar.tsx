@@ -66,16 +66,16 @@ export default function Navbar() {
 
           {/* Mobile Navigation */}
           <div className={cn(
-            "fixed inset-0 top-16 bg-background z-50 lg:hidden",
+            "fixed inset-0 top-16 bg-background/95 backdrop-blur-sm border-b z-50 lg:hidden",
             isOpen ? "block" : "hidden"
           )}>
-            <div className="flex flex-col items-center gap-4 pt-8">
+            <div className="flex flex-col items-center gap-6 pt-8">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setIsOpen(false)}
-                  className="text-lg text-foreground hover:text-primary transition-colors"
+                  className="text-xl font-medium text-foreground hover:text-primary transition-colors"
                 >
                   {link.label}
                 </Link>

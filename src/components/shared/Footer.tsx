@@ -3,8 +3,6 @@
 import Link from 'next/link';
 
 export function Footer() {
-  const currentYear = new Date().getFullYear();
-
   return (
     <footer className="border-t bg-background">
       <div className="container mx-auto px-4 py-8">
@@ -45,7 +43,7 @@ export function Footer() {
             <ul className="space-y-2">
               <li>
                 <a 
-                  href="https://github.com" 
+                  href="https://github.com/furkanardicm" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-sm text-muted-foreground hover:text-primary transition-colors"
@@ -55,22 +53,12 @@ export function Footer() {
               </li>
               <li>
                 <a 
-                  href="https://linkedin.com" 
+                  href="https://linkedin.com/in/furkanardicm" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-sm text-muted-foreground hover:text-primary transition-colors"
                 >
                   LinkedIn
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="https://twitter.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Twitter
                 </a>
               </li>
             </ul>
@@ -79,16 +67,16 @@ export function Footer() {
             <h3 className="text-lg font-semibold mb-4">İletişim</h3>
             <ul className="space-y-2">
               <li className="text-sm text-muted-foreground">
-                Email: info@example.com
+                Email: furkanardcm@gmail.com
               </li>
               <li className="text-sm text-muted-foreground">
-                Konum: İstanbul, Türkiye
+                Konum: Konya, Türkiye
               </li>
             </ul>
           </div>
         </div>
         <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
-          <p>&copy; {currentYear} Portfolio. Tüm hakları saklıdır.</p>
+          <p>&copy; 2025 Portfolio. Tüm hakları saklıdır.</p>
         </div>
       </div>
     </footer>

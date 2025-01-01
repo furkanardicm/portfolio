@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/lib/context/language';
+import Cookies from 'js-cookie';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -10,6 +11,7 @@ export default function AdminLoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const content = {
     tr: {
@@ -35,17 +37,21 @@ export default function AdminLoginPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
 
     try {
-      // Burada gerçek API çağrısı yapılacak
       if (email === 'furkanardcm@gmail.com' && password === 'admin123') {
-        // Başarılı giriş durumunda admin paneline yönlendir
-        router.push('/admin/dashboard');
+        // Token oluştur ve cookie'ye kaydet
+        const token = btoa(email + ':' + new Date().getTime());
+        Cookies.set('token', token, { expires: 7 }); // 7 gün geçerli
+        router.push('/admin');
       } else {
         setError(content[language].error);
       }
-    } catch {
+    } catch (err) {
       setError(content[language].error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -73,6 +79,7 @@ export default function AdminLoginPage() {
               placeholder={content[language].emailPlaceholder}
               className="w-full px-4 py-2 rounded-md border bg-background"
               required
+              disabled={isLoading}
             />
           </div>
 
@@ -88,14 +95,16 @@ export default function AdminLoginPage() {
               placeholder={content[language].passwordPlaceholder}
               className="w-full px-4 py-2 rounded-md border bg-background"
               required
+              disabled={isLoading}
             />
           </div>
 
           <button
             type="submit"
-            className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+            className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isLoading}
           >
-            {content[language].login}
+            {isLoading ? 'Giriş yapılıyor...' : content[language].login}
           </button>
         </form>
       </div>
