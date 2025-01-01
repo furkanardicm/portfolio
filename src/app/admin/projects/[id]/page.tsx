@@ -14,15 +14,16 @@ interface Project {
   order: number;
 }
 
-interface PageProps {
-  params: {
+type PageProps = {
+  params: Promise<{
     id: string;
-  };
-  searchParams: { [key: string]: string | string[] | undefined };
+  }>;
+  searchParams?: { [key: string]: string | string[] | undefined };
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  if (!params?.id) {
+  const resolvedParams = await params;
+  if (!resolvedParams?.id) {
     return {
       title: "Geçersiz Proje | Admin Panel",
       description: "Geçersiz proje ID'si"
@@ -32,11 +33,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   try {
     const client = await clientPromise;
     const db = client.db("portfolio");
-    const project = await db.collection("projects").findOne({ _id: new ObjectId(params.id) });
+    const project = await db.collection("projects").findOne({ _id: new ObjectId(resolvedParams.id) });
 
     return {
       title: `${project?.title || "Proje"} Düzenle | Admin Panel`,
-      description: `${project?.title || params.id} projesini düzenleme sayfası`
+      description: `${project?.title || resolvedParams.id} projesini düzenleme sayfası`
     };
   } catch (error) {
     console.error("Metadata yüklenirken hata:", error);
@@ -48,7 +49,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function EditProjectPage({ params }: PageProps) {
-  if (!params?.id) {
+  const resolvedParams = await params;
+  if (!resolvedParams?.id) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-16">
@@ -63,7 +65,7 @@ export default async function EditProjectPage({ params }: PageProps) {
   try {
     const client = await clientPromise;
     const db = client.db("portfolio");
-    const rawProject = await db.collection("projects").findOne({ _id: new ObjectId(params.id) });
+    const rawProject = await db.collection("projects").findOne({ _id: new ObjectId(resolvedParams.id) });
 
     if (!rawProject) {
       return (
@@ -88,7 +90,7 @@ export default async function EditProjectPage({ params }: PageProps) {
       order: rawProject.order
     };
 
-    return <EditProjectForm id={params.id} initialData={project} />;
+    return <EditProjectForm id={resolvedParams.id} initialData={project} />;
   } catch (error) {
     console.error('Proje yüklenirken hata:', error);
     return (
