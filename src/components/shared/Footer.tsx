@@ -7,13 +7,13 @@ export function Footer() {
     <footer className="border-t bg-background">
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div>
+          <div className="text-center md:text-left">
             <h3 className="text-lg font-semibold mb-4">Portfolio</h3>
             <p className="text-sm text-muted-foreground">
               Modern ve profesyonel web çözümleri geliştiren full-stack yazılım geliştiricisi.
             </p>
           </div>
-          <div>
+          <div className="text-center md:text-left">
             <h3 className="text-lg font-semibold mb-4">Bağlantılar</h3>
             <ul className="space-y-2">
               <li>
@@ -38,7 +38,7 @@ export function Footer() {
               </li>
             </ul>
           </div>
-          <div>
+          <div className="text-center md:text-left">
             <h3 className="text-lg font-semibold mb-4">Sosyal Medya</h3>
             <ul className="space-y-2">
               <li>
@@ -63,7 +63,7 @@ export function Footer() {
               </li>
             </ul>
           </div>
-          <div>
+          <div className="text-center md:text-left">
             <h3 className="text-lg font-semibold mb-4">İletişim</h3>
             <ul className="space-y-2">
               <li className="text-sm text-muted-foreground">

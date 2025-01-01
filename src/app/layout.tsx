@@ -5,6 +5,12 @@ import Navbar from '@/components/shared/Navbar';
 import { Footer } from '@/components/shared/Footer';
 import { cn } from '@/lib/utils';
 import { headers } from 'next/headers';
+import { Mulish } from 'next/font/google';
+
+const mulish = Mulish({ 
+  subsets: ['latin'],
+  display: 'swap',
+});
 
 export default async function RootLayout({
   children,
@@ -16,7 +22,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn('min-h-screen bg-background font-sans antialiased')}>
+      <body className={cn('min-h-screen bg-background font-sans antialiased', mulish.className)}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
