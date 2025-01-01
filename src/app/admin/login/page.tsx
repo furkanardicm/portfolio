@@ -41,14 +41,13 @@ export default function AdminLoginPage() {
 
     try {
       if (email === 'furkanardcm@gmail.com' && password === 'admin123') {
-        // Token oluştur ve cookie'ye kaydet
         const token = btoa(email + ':' + new Date().getTime());
-        Cookies.set('token', token, { expires: 7 }); // 7 gün geçerli
+        Cookies.set('token', token, { expires: 7 });
         router.push('/admin');
       } else {
         setError(content[language].error);
       }
-    } catch (err) {
+    } catch {
       setError(content[language].error);
     } finally {
       setIsLoading(false);
