@@ -2,22 +2,17 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  // Admin sayfalarını kontrol et
-  if (request.nextUrl.pathname.startsWith('/admin')) {
-    // Admin sayfaları için özel header ekle
-    const requestHeaders = new Headers(request.headers);
-    requestHeaders.set('x-is-admin-page', 'true');
+  const isAdminPath = request.nextUrl.pathname.startsWith('/admin')
+  const isLoginPath = request.nextUrl.pathname === '/admin/login'
+  const token = request.cookies.get('token')?.value
 
-    return NextResponse.next({
-      request: {
-        headers: requestHeaders,
-      },
-    });
+  if (isAdminPath && !isLoginPath && !token) {
+    return NextResponse.redirect(new URL('/admin/login', request.url))
   }
 
-  return NextResponse.next();
+  return NextResponse.next()
 }
 
 export const config = {
-  matcher: '/((?!api|_next/static|_next/image|favicon.ico).*)',
-}; 
+  matcher: '/admin/:path*'
+} 
