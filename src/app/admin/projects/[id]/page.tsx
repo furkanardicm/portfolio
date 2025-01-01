@@ -20,7 +20,14 @@ interface FormData extends Omit<Project, 'technologies'> {
   technologies: string;
 }
 
-export default function EditProjectPage({ params }: { params: { id: string } }) {
+interface PageProps {
+  params: {
+    id: string;
+  };
+  searchParams?: { [key: string]: string | string[] | undefined };
+}
+
+export default function EditProjectPage({ params }: PageProps) {
   const { language } = useLanguage();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
