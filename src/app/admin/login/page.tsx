@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/lib/context/language';
 import Cookies from 'js-cookie';
+import { LoadingSpinner } from "@/components/ui/loading";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -103,7 +104,14 @@ export default function AdminLoginPage() {
             className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isLoading}
           >
-            {isLoading ? 'Giriş yapılıyor...' : content[language].login}
+            {isLoading ? (
+              <div className="flex items-center justify-center gap-2">
+                <LoadingSpinner className="h-5 w-5" />
+                <span>{content[language].login}</span>
+              </div>
+            ) : (
+              content[language].login
+            )}
           </button>
         </form>
       </div>
