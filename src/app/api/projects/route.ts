@@ -7,7 +7,13 @@ export async function GET() {
     const client = await clientPromise;
     const db = client.db("portfolio");
     const projects = await db.collection("projects").find({}).toArray();
-    return NextResponse.json(projects);
+    
+    const serializedProjects = projects.map(project => ({
+      ...project,
+      _id: project._id.toString()
+    }));
+    
+    return NextResponse.json(serializedProjects);
   } catch {
     return NextResponse.json({ error: "Projeler yüklenirken hata oluştu" }, { status: 500 });
   }

@@ -1,143 +1,117 @@
 'use client';
 
 import { useLanguage } from '@/lib/context/language';
-import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Moon, Sun } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
+import { Menu, X } from 'lucide-react';
+import { useState } from 'react';
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { language } = useLanguage();
   const pathname = usePathname();
-  const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const { language } = useLanguage();
+  const [isOpen, setIsOpen] = useState(false);
 
   const content = {
     tr: {
-      title: 'Admin Panel',
-      menu: {
-        dashboard: 'Ana Sayfa',
-        projects: 'Projeler',
-        blog: 'Blog Yazıları',
-        settings: 'Ayarlar'
-      },
-      theme: {
-        light: 'Açık Tema',
-        dark: 'Koyu Tema'
-      }
+      home: 'Ana Sayfa',
+      projects: 'Projeler',
+      blog: 'Blog Yazıları',
+      settings: 'Ayarlar',
+      backToSite: 'Siteye Dön'
     },
     en: {
-      title: 'Admin Panel',
-      menu: {
-        dashboard: 'Dashboard',
-        projects: 'Projects',
-        blog: 'Blog Posts',
-        settings: 'Settings'
-      },
-      theme: {
-        light: 'Light Theme',
-        dark: 'Dark Theme'
-      }
+      home: 'Home',
+      projects: 'Projects',
+      blog: 'Blog Posts',
+      settings: 'Settings',
+      backToSite: 'Back to Site'
     }
   };
 
-  const menuItems = [
-    { href: '/admin', label: content[language].menu.dashboard },
-    { href: '/admin/projects', label: content[language].menu.projects },
-    { href: '/admin/blog', label: content[language].menu.blog },
-    { href: '/admin/settings', label: content[language].menu.settings }
+  const navigation = [
+    { name: content[language].home, href: '/admin' },
+    { name: content[language].projects, href: '/admin/projects' },
+    { name: content[language].blog, href: '/admin/blog' },
+    { name: content[language].settings, href: '/admin/settings' }
   ];
-
-  const isActiveLink = (href: string) => {
-    if (href === '/admin') {
-      return pathname === '/admin';
-    }
-    return pathname.startsWith(href);
-  };
-
-  const toggleTheme = () => {
-    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
-  };
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Navbar */}
-      <nav className="bg-card border-b border-border">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-bold">{content[language].title}</h1>
-              <div className="hidden md:block ml-10">
-                <div className="flex items-center space-x-4">
-                  {menuItems.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                        isActiveLink(item.href)
-                          ? 'bg-primary text-primary-foreground'
-                          : 'text-foreground hover:bg-accent hover:text-accent-foreground'
-                      }`}
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
-                </div>
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <nav className="container max-w-[1400px] mx-auto px-4">
+          <div className="flex h-16 items-center justify-between">
+            <div className="flex items-center gap-4">
+              {/* Mobil Menu Butonu */}
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="md:hidden text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </button>
+
+              <Link href="/admin" className="text-lg font-bold">
+                Admin Panel
+              </Link>
+
+              {/* Masaüstü Navigasyon */}
+              <div className="hidden md:flex md:gap-6">
+                {navigation.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`text-sm font-bold transition-colors hover:text-primary ${
+                      pathname === item.href
+                        ? 'text-foreground'
+                        : 'text-muted-foreground'
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
               </div>
             </div>
 
-            {/* Theme Toggle Button */}
-            {mounted && (
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded-md hover:bg-accent transition-colors"
-                title={resolvedTheme === 'dark' ? content[language].theme.light : content[language].theme.dark}
+            <div className="flex items-center gap-4">
+              <ThemeToggle />
+              <Link
+                href="/"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
-                {resolvedTheme === 'dark' ? (
-                  <Sun className="w-5 h-5" />
-                ) : (
-                  <Moon className="w-5 h-5" />
-                )}
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Mobil menü */}
-        <div className="md:hidden border-t border-border">
-          <div className="container mx-auto px-4 py-2">
-            <div className="flex flex-col space-y-2">
-              {menuItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    isActiveLink(item.href)
-                      ? 'bg-primary text-primary-foreground'
-                      : 'text-foreground hover:bg-accent hover:text-accent-foreground'
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              ))}
+                {content[language].backToSite}
+              </Link>
             </div>
           </div>
-        </div>
-      </nav>
 
-      {/* Ana içerik */}
-      <main className="container mx-auto px-4 py-8">
-        {children}
-      </main>
+          {/* Mobil Menu */}
+          {isOpen && (
+            <div className="md:hidden py-4 border-t">
+              <div className="flex flex-col space-y-4">
+                {navigation.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setIsOpen(false)}
+                    className={`text-sm font-bold transition-colors hover:text-primary ${
+                      pathname === item.href
+                        ? 'text-foreground'
+                        : 'text-muted-foreground'
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </nav>
+      </header>
+
+      <main>{children}</main>
     </div>
   );
 } 

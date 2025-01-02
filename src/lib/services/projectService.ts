@@ -3,17 +3,55 @@ import connectDB from '../db/mongodb';
 
 export async function getProjects(): Promise<IProject[]> {
   await connectDB();
-  return Project.find().sort({ order: 1 });
+  const projects = await Project.find().sort({ order: 1 });
+  return projects.map(project => ({
+    _id: project._id.toString(),
+    title: project.title,
+    description: project.description,
+    technologies: project.technologies,
+    githubUrl: project.githubUrl,
+    liveUrl: project.liveUrl,
+    featured: project.featured,
+    order: project.order,
+    createdAt: project.createdAt,
+    updatedAt: project.updatedAt
+  }));
 }
 
 export async function getFeaturedProjects(): Promise<IProject[]> {
   await connectDB();
-  return Project.find({ featured: true }).sort({ order: 1 });
+  const projects = await Project.find({ featured: true }).sort({ order: 1 });
+  return projects.map(project => ({
+    _id: project._id.toString(),
+    title: project.title,
+    description: project.description,
+    technologies: project.technologies,
+    githubUrl: project.githubUrl,
+    liveUrl: project.liveUrl,
+    featured: project.featured,
+    order: project.order,
+    createdAt: project.createdAt,
+    updatedAt: project.updatedAt
+  }));
 }
 
 export async function getProjectById(id: string): Promise<IProject | null> {
   await connectDB();
-  return Project.findById(id);
+  const project = await Project.findById(id);
+  if (!project) return null;
+  
+  return {
+    _id: project._id.toString(),
+    title: project.title,
+    description: project.description,
+    technologies: project.technologies,
+    githubUrl: project.githubUrl,
+    liveUrl: project.liveUrl,
+    featured: project.featured,
+    order: project.order,
+    createdAt: project.createdAt,
+    updatedAt: project.updatedAt
+  };
 }
 
 export async function createProject(projectData: Omit<IProject, 'createdAt' | 'updatedAt'>): Promise<IProject> {

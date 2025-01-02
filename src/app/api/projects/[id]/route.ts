@@ -34,7 +34,12 @@ export async function GET(request: Request, { params }: Props) {
       );
     }
 
-    return NextResponse.json(project);
+    const serializedProject = {
+      ...project,
+      _id: project._id.toString()
+    };
+
+    return NextResponse.json(serializedProject);
   } catch (error) {
     console.error('Proje yüklenirken hata:', error);
     return NextResponse.json(

@@ -1,39 +1,40 @@
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 import './globals.css';
-import { ThemeProvider } from 'next-themes';
+import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { LanguageProvider } from '@/lib/context/language';
+import { Toaster } from 'sonner';
 import Navbar from '@/components/shared/Navbar';
-import { Footer } from '@/components/shared/Footer';
-import { cn } from '@/lib/utils';
-import { headers } from 'next/headers';
-import { Mulish } from 'next/font/google';
+import Footer from '@/components/Footer';
 
-const mulish = Mulish({ 
-  subsets: ['latin'],
-  display: 'swap',
-});
+const inter = Inter({ subsets: ['latin'] });
 
-export default async function RootLayout({
+export const metadata: Metadata = {
+  title: 'Portfolio',
+  description: 'My portfolio website',
+};
+
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const headersList = await headers();
-  const isAdminPage = headersList.get('x-is-admin-page') === 'true';
-
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn('min-h-screen bg-background font-sans antialiased', mulish.className)}>
+      <body className={inter.className}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
-          storageKey="portfolio-theme"
         >
           <LanguageProvider>
-            {!isAdminPage && <Navbar />}
-            {children}
-            {!isAdminPage && <Footer />}
+            <div className="flex min-h-screen flex-col">
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+            <Toaster position="top-right" />
           </LanguageProvider>
         </ThemeProvider>
       </body>

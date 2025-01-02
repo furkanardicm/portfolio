@@ -38,20 +38,23 @@ const technologies = [
 
 export default function AboutSkills() {
   return (
-    <div className="space-y-8">
-      {technologies.map((category) => (
-        <div key={category.category} className="space-y-4">
-          <h3 className="text-xl font-semibold text-foreground">{category.category}</h3>
-          <div className="flex flex-wrap gap-3">
-            {category.items.map((tech) => (
-              <div
-                key={tech.name}
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent text-accent-foreground hover:bg-accent/80 transition-colors"
-              >
-                <tech.icon className={cn("w-4 h-4", tech.color)} />
-                <span className="text-sm font-medium whitespace-nowrap">{tech.name}</span>
-              </div>
-            ))}
+    <div className="grid gap-8">
+      {technologies.map((tech) => (
+        <div key={tech.category} className="space-y-4">
+          <h3 className="text-xl font-bold text-center md:text-left">{tech.category}</h3>
+          <div className="flex flex-wrap justify-center md:justify-start gap-4">
+            {tech.items.map((item) => {
+              const Icon = item.icon;
+              return (
+                <div
+                  key={item.name}
+                  className="flex flex-col items-center gap-2 p-4 rounded-lg bg-accent/5 hover:bg-accent/10 transition-colors"
+                >
+                  <Icon className={cn("w-8 h-8", item.color)} />
+                  <span className="text-sm font-medium">{item.name}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
       ))}

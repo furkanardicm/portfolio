@@ -38,73 +38,81 @@ export default function Home() {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 20 }}
       transition={{ duration: 0.5 }}
-      className="flex min-h-screen flex-col items-center justify-center bg-background p-8"
+      className="container max-w-7xl mx-auto px-4 py-8"
     >
-      <div className="container max-w-4xl">
-        <div className="flex flex-col-reverse md:flex-row items-center gap-8 mb-16">
-          <div className="flex-1 text-center md:text-left">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-              className="mb-6"
-            >
-              <p className="text-base md:text-xl text-muted-foreground mb-2 text-center">{content[language].greeting}</p>
-              <h1 className="text-3xl md:text-5xl font-bold mb-3 md:mb-4 text-center">{content[language].name}</h1>
-              <h2 className="text-xl md:text-3xl text-muted-foreground mb-3 md:mb-4 text-center">{content[language].title}</h2>
-              <p className="text-base md:text-lg text-muted-foreground leading-relaxed text-center md:text-justify">{content[language].description}</p>
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
-              className="flex flex-wrap gap-3 md:gap-4 justify-center md:justify-start"
-            >
-              <a href="https://github.com/furkanardicm" target="_blank" rel="noopener noreferrer" 
-                className="flex items-center gap-2 px-3 md:px-4 py-2 text-sm md:text-base bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-all">
-                <FaGithub className="w-4 h-4 md:w-5 md:h-5" /> GitHub
-              </a>
-              <a href="https://www.linkedin.com/in/furkanardicm/" target="_blank" rel="noopener noreferrer"
-                className="flex items-center gap-2 px-3 md:px-4 py-2 text-sm md:text-base bg-[#0077B5] text-white rounded-md hover:bg-[#0077B5]/90 transition-all">
-                <FaLinkedin className="w-4 h-4 md:w-5 md:h-5" /> LinkedIn
-              </a>
-              <a href="mailto:furkanardcm@gmail.com"
-                className="flex items-center gap-2 px-3 md:px-4 py-2 text-sm md:text-base bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-all">
-                <FaEnvelope className="w-4 h-4 md:w-5 md:h-5" /> furkanardcm@gmail.com
-              </a>
-            </motion.div>
-          </div>
+      <div className="flex flex-col-reverse md:flex-row items-center gap-8 mb-16">
+        <div className="space-y-6 text-center lg:text-left">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="space-y-4"
+          >
+            <h2 className="text-2xl md:text-3xl font-medium text-muted-foreground">
+              {content[language].greeting}
+            </h2>
+            <h1 className="text-4xl md:text-5xl font-bold">
+              {content[language].name}
+            </h1>
+            <p className="text-3xl md:text-4xl font-semibold text-primary">
+              {content[language].title}
+            </p>
+            <p className="text-lg md:text-xl text-muted-foreground">
+              {content[language].description}
+            </p>
+          </motion.div>
 
           <motion.div 
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
-            className="w-48 h-48 md:w-64 md:h-64 relative"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+            className="flex flex-wrap gap-3 md:gap-4 justify-center md:justify-start"
           >
-            <div className="absolute inset-0 bg-gradient-to-tr from-pink-500 via-purple-500 to-blue-500 rounded-full p-1">
-              <div className="absolute inset-0 bg-background rounded-full p-1">
+            <a href="https://github.com/furkanardicm" target="_blank" rel="noopener noreferrer" 
+              className="flex items-center gap-2 px-3 md:px-4 py-2 text-sm md:text-base bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-all">
+              <FaGithub className="w-4 h-4 md:w-5 md:h-5" /> GitHub
+            </a>
+            <a href="https://www.linkedin.com/in/furkanardicm/" target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-2 px-3 md:px-4 py-2 text-sm md:text-base bg-[#0077B5] text-white rounded-md hover:bg-[#0077B5]/90 transition-all">
+              <FaLinkedin className="w-4 h-4 md:w-5 md:h-5" /> LinkedIn
+            </a>
+            <a href="mailto:furkanardcm@gmail.com"
+              className="flex items-center gap-2 px-3 md:px-4 py-2 text-sm md:text-base bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-all">
+              <FaEnvelope className="w-4 h-4 md:w-5 md:h-5" /> furkanardcm@gmail.com
+            </a>
+          </motion.div>
+        </div>
+
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+          className="w-48 h-48 md:w-64 md:h-64 relative shrink-0"
+        >
+          <div className="absolute inset-0 bg-gradient-to-tr from-pink-500 via-purple-500 to-blue-500 rounded-full p-1">
+            <div className="absolute inset-0 bg-background rounded-full p-1">
+              <div className="relative w-full h-full">
                 <Image
                   src="/images/profile.png"
                   alt="Muhammed Furkan Ardıç"
                   fill
                   className="rounded-full object-cover"
                   priority
-                  unoptimized
+                  sizes="(max-width: 768px) 192px, 256px"
                 />
               </div>
             </div>
-          </motion.div>
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8, duration: 0.5 }}
-        >
-          <Skills />
+          </div>
         </motion.div>
       </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8, duration: 0.5 }}
+      >
+        <Skills />
+      </motion.div>
     </motion.main>
   );
 }

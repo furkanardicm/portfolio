@@ -1,25 +1,22 @@
 'use client';
 
-import Link from 'next/link';
 import { useLanguage } from '@/lib/context/language';
-import { useTheme } from 'next-themes';
-import { FaSun, FaMoon } from 'react-icons/fa';
 import { Menu, X } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import LanguageToggle from '../ui/LanguageToggle';
-import { cn } from '@/lib/utils';
+import Link from 'next/link';
+import { useState } from 'react';
 import { usePathname } from 'next/navigation';
+import { ThemeToggle } from './ThemeToggle';
+import { LanguageToggle } from './LanguageToggle';
 
 export default function Navbar() {
   const { language } = useLanguage();
-  const { theme, setTheme, systemTheme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  // Admin sayfalarında navbar'ı gizle
+  if (pathname.startsWith('/admin')) {
+    return null;
+  }
 
   const content = {
     tr: {
@@ -27,18 +24,18 @@ export default function Navbar() {
       about: 'Hakkımda',
       projects: 'Projeler',
       blog: 'Blog',
-      contact: 'İletişim'
+      contact: 'İletişim',
     },
     en: {
       home: 'Home',
       about: 'About',
       projects: 'Projects',
       blog: 'Blog',
-      contact: 'Contact'
-    }
+      contact: 'Contact',
+    },
   };
 
-  const navLinks = [
+  const links = [
     { href: '/', label: content[language].home },
     { href: '/about', label: content[language].about },
     { href: '/projects', label: content[language].projects },
@@ -46,78 +43,77 @@ export default function Navbar() {
     { href: '/contact', label: content[language].contact },
   ];
 
-  const isActive = (href: string) => {
-    if (href === '/') {
-      return pathname === href;
-    }
-    return pathname.startsWith(href);
+  const isActive = (path: string) => {
+    if (path === '/' && pathname !== '/') return false;
+    return pathname.startsWith(path);
   };
 
-  const currentTheme = theme === 'system' ? systemTheme : theme;
-
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center">
-        <nav className="flex flex-1 items-center justify-between">
-          {/* Mobile Menu Button */}
+    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container max-w-[1400px] mx-auto px-4">
+        <div className="flex h-16 items-center justify-between">
+          {/* Mobil Menü Butonu */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden text-foreground hover:text-primary transition-colors"
+            className="md:hidden p-2 text-muted-foreground hover:text-foreground"
           >
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
 
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-6 text-sm">
-            {navLinks.map((link) => (
+          {/* Logo veya Site Başlığı */}
+          <div className="md:flex-1">
+            <Link href="/" className="text-xl font-bold">
+              Portfolio
+            </Link>
+          </div>
+
+          {/* Masaüstü Menü */}
+          <div className="hidden md:flex items-center space-x-6 flex-1 justify-center">
+            {links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={cn(
-                  "text-foreground hover:text-primary transition-colors px-3 py-2 rounded-md",
-                  isActive(link.href) && "bg-muted text-primary"
+                className={`relative py-4 text-sm font-medium transition-colors hover:text-foreground ${
+                  isActive(link.href)
+                    ? 'text-foreground'
+                    : 'text-muted-foreground'
+                }`}
+              >
+                {link.label}
+                {isActive(link.href) && (
+                  <span className="absolute left-0 right-0 bottom-0 h-[2px] bg-primary" />
                 )}
+              </Link>
+            ))}
+          </div>
+
+          {/* Tema ve Dil Değiştirme */}
+          <div className="flex items-center space-x-4 md:flex-1 md:justify-end">
+            <ThemeToggle />
+            <LanguageToggle />
+          </div>
+        </div>
+
+        {/* Mobil Menü */}
+        {isOpen && (
+          <div className="md:hidden py-4 space-y-2">
+            {links.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`block px-4 py-2 text-sm rounded-md ${
+                  isActive(link.href)
+                    ? 'bg-primary/10 text-foreground font-medium'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                }`}
+                onClick={() => setIsOpen(false)}
               >
                 {link.label}
               </Link>
             ))}
           </div>
-
-          {/* Mobile Navigation */}
-          <div className={cn(
-            "fixed inset-0 top-16 bg-background/95 backdrop-blur-sm border-b z-50 lg:hidden",
-            isOpen ? "block" : "hidden"
-          )}>
-            <div className="flex flex-col items-center gap-6 pt-8 bg-background min-h-screen">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setIsOpen(false)}
-                  className={cn(
-                    "text-xl font-medium text-foreground hover:text-primary transition-colors px-4 py-2 rounded-md",
-                    isActive(link.href) && "bg-muted text-primary"
-                  )}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <LanguageToggle />
-            {mounted && (
-              <button
-                onClick={() => setTheme(currentTheme === 'dark' ? 'light' : 'dark')}
-                className="text-foreground hover:text-primary transition-colors"
-              >
-                {currentTheme === 'dark' ? <FaSun className="w-5 h-5" /> : <FaMoon className="w-5 h-5" />}
-              </button>
-            )}
-          </div>
-        </nav>
+        )}
       </div>
-    </header>
+    </nav>
   );
 } 
