@@ -2,11 +2,24 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
+  // WWW ve non-WWW yönlendirmesi
+  const hostname = request.headers.get('host') || '';
+  const wwwRegex = /^www\./;
+  
+  // WWW'lu URL'leri WWW'suz URL'lere yönlendir
+  if (wwwRegex.test(hostname)) {
+    const newHost = hostname.replace(wwwRegex, '');
+    return NextResponse.redirect(
+      `${request.nextUrl.protocol}//${newHost}${request.nextUrl.pathname}${request.nextUrl.search}`,
+      301
+    );
+  }
+
+  // Admin sayfalarına erişim kontrolü
   const isAdminPath = request.nextUrl.pathname.startsWith('/admin');
   const isLoginPath = request.nextUrl.pathname === '/admin/login';
   const token = request.cookies.get('token')?.value;
 
-  // Admin sayfalarına erişim kontrolü
   if (isAdminPath && !isLoginPath && !token) {
     return NextResponse.redirect(new URL('/admin/login', request.url));
   }
@@ -27,5 +40,8 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*']
-} 
+  matcher: [
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    '/admin/:path*'
+  ]
+}; 
