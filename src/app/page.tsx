@@ -48,16 +48,16 @@ export default function Home() {
             transition={{ delay: 0.2, duration: 0.5 }}
             className="space-y-4"
           >
-            <h2 className="text-2xl md:text-3xl font-medium text-muted-foreground">
-              {content[language].greeting}
-            </h2>
             <h1 className="text-4xl md:text-5xl font-bold">
               {content[language].name}
             </h1>
-            <p className="text-3xl md:text-4xl font-semibold text-primary">
+            <h2 className="text-3xl md:text-4xl font-semibold text-primary">
               {content[language].title}
-            </p>
-            <p className="text-lg md:text-xl text-muted-foreground">
+            </h2>
+            <h3 className="text-2xl md:text-3xl font-medium text-muted-foreground">
+              {content[language].greeting}
+            </h3>
+            <p className="text-lg md:text-xl text-foreground">
               {content[language].description}
             </p>
           </motion.div>
@@ -68,17 +68,30 @@ export default function Home() {
             transition={{ delay: 0.4, duration: 0.5 }}
             className="flex flex-wrap gap-3 md:gap-4 justify-center md:justify-start"
           >
-            <a href="https://github.com/furkanardicm" target="_blank" rel="noopener noreferrer" 
-              className="flex items-center gap-2 px-3 md:px-4 py-2 text-sm md:text-base bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-all">
-              <FaGithub className="w-4 h-4 md:w-5 md:h-5" /> GitHub
+            <a 
+              href="https://github.com/furkanardicm" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              aria-label="GitHub Profilim"
+              className="flex items-center gap-2 px-4 py-3 text-base font-medium bg-[#24292e] hover:bg-[#1b1f23] text-white rounded-md transition-all shadow-lg"
+            >
+              <FaGithub className="w-5 h-5" aria-hidden="true" /> GitHub
             </a>
-            <a href="https://www.linkedin.com/in/furkanardicm/" target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-2 px-3 md:px-4 py-2 text-sm md:text-base bg-[#0077B5] text-white rounded-md hover:bg-[#0077B5]/90 transition-all">
-              <FaLinkedin className="w-4 h-4 md:w-5 md:h-5" /> LinkedIn
+            <a 
+              href="https://www.linkedin.com/in/furkanardicm/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              aria-label="LinkedIn Profilim"
+              className="flex items-center gap-2 px-4 py-3 text-base font-medium bg-[#0a66c2] hover:bg-[#004182] text-white rounded-md transition-all shadow-lg"
+            >
+              <FaLinkedin className="w-5 h-5" aria-hidden="true" /> LinkedIn
             </a>
-            <a href="mailto:furkanardcm@gmail.com"
-              className="flex items-center gap-2 px-3 md:px-4 py-2 text-sm md:text-base bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-all">
-              <FaEnvelope className="w-4 h-4 md:w-5 md:h-5" /> furkanardcm@gmail.com
+            <a 
+              href="mailto:furkanardcm@gmail.com"
+              aria-label="E-posta Gönder"
+              className="flex items-center gap-2 px-4 py-3 text-base font-medium bg-[#ea4335] hover:bg-[#d62516] text-white rounded-md transition-all shadow-lg"
+            >
+              <FaEnvelope className="w-5 h-5" aria-hidden="true" /> furkanardcm@gmail.com
             </a>
           </motion.div>
         </div>
