@@ -40,7 +40,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="tr" suppressHydrationWarning>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#000000" />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="apple-touch-icon" href="/images/profile.png" />
+      </head>
       <body className={inter.className}>
         <ThemeProvider
           attribute="class"
@@ -50,8 +56,11 @@ export default function RootLayout({
         >
           <LanguageProvider>
             <div className="flex min-h-screen flex-col">
+              <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:p-4">
+                Ana içeriğe atla
+              </a>
               <Navbar />
-              <main className="flex-1">{children}</main>
+              <main id="main-content" className="flex-1">{children}</main>
               <Footer />
             </div>
             <Toaster position="top-right" />

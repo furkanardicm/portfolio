@@ -1,0 +1,21 @@
+{
+  "short_name": "Furkan Ardıç",
+  "name": "Muhammed Furkan Ardıç | Portfolio",
+  "description": "Full Stack Web Developer olarak modern web teknolojileri ile kullanıcı odaklı ve performanslı çözümler üretiyorum.",
+  "icons": [
+    {
+      "src": "/images/profile.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff",
+  "orientation": "portrait",
+  "scope": "/",
+  "lang": "tr",
+  "dir": "ltr"
+} 
