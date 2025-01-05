@@ -1,68 +1,62 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useLanguage } from '@/lib/context/language';
+import { ProjectCard } from '@/components/ProjectCard';
 import { IProject } from '@/lib/models/Project';
-import ProjectCard from './ProjectCard';
+import { useEffect, useState } from 'react';
 
-export default function FeaturedProjects() {
+export function FeaturedProjects() {
   const { language } = useLanguage();
   const [projects, setProjects] = useState<IProject[]>([]);
-  const [error, setError] = useState<string | null>(null);
 
-  const content = useMemo(() => ({
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch('/api/projects');
+        const data = await response.json();
+        setProjects(data);
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  const content = {
     tr: {
       title: 'Öne Çıkan Projeler',
-      error: 'Projeler yüklenirken bir hata oluştu.',
-      viewAll: 'Tüm Projeleri Gör'
+      description: 'Geliştirdiğim bazı projeler'
     },
     en: {
       title: 'Featured Projects',
-      error: 'An error occurred while loading projects.',
-      viewAll: 'View All Projects'
+      description: 'Some of the projects I have built'
     }
-  }), []);
+  };
 
-  const filteredProjects = useMemo(() => {
-    return projects.filter(project => project.featured);
-  }, [projects]);
+  const filteredProjects = projects.filter(project => project.featured);
 
-  const fetchProjects = useCallback(async () => {
-    try {
-      const response = await fetch('/api/projects');
-      if (!response.ok) {
-        throw new Error('Failed to fetch projects');
-      }
-      const data = await response.json();
-      setProjects(data);
-    } catch (err) {
-      console.error('Error fetching projects:', err);
-      setError(content[language].error);
-    }
-  }, [language, content]);
-
-  useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects]);
-
-  if (error) {
-    return (
-      <div className="text-center text-destructive py-8">
-        {error}
-      </div>
-    );
+  if (filteredProjects.length === 0) {
+    return null;
   }
 
   return (
-    <section className="py-16 bg-background">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold mb-8">{content[language].title}</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="py-24 sm:py-32">
+      <div className="container">
+        <div className="mx-auto max-w-2xl lg:mx-0">
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            {content[language].title}
+          </h2>
+          <p className="mt-4 text-lg text-muted-foreground">
+            {content[language].description}
+          </p>
+        </div>
+        <div className="mt-10 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {filteredProjects.map((project) => (
-            <ProjectCard key={project._id?.toString()} project={project} />
+            <ProjectCard key={project._id.toString()} project={project} />
           ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 } 
