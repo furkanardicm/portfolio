@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/lib/context/language';
 import Cookies from 'js-cookie';
 import { LoadingSpinner } from "@/components/ui/loading";
+import { Eye, EyeOff } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -13,6 +15,7 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const content = {
     tr: {
@@ -22,7 +25,9 @@ export default function AdminLoginPage() {
       login: 'Giriş Yap',
       emailPlaceholder: 'E-posta adresinizi giriniz',
       passwordPlaceholder: 'Şifrenizi giriniz',
-      error: 'Geçersiz e-posta veya şifre'
+      error: 'Geçersiz e-posta veya şifre',
+      showPassword: 'Şifreyi göster',
+      hidePassword: 'Şifreyi gizle'
     },
     en: {
       title: 'Admin Login',
@@ -31,7 +36,9 @@ export default function AdminLoginPage() {
       login: 'Login',
       emailPlaceholder: 'Enter your email',
       passwordPlaceholder: 'Enter your password',
-      error: 'Invalid email or password'
+      error: 'Invalid email or password',
+      showPassword: 'Show password',
+      hidePassword: 'Hide password'
     }
   };
 
@@ -44,11 +51,12 @@ export default function AdminLoginPage() {
       if (email === 'admin@portfolio.com' && password === 'Portfolio2025!') {
         const token = btoa(email + ':' + new Date().getTime());
         Cookies.set('token', token, { expires: 7 });
-        router.replace('/admin');
+        await router.replace('/admin');
       } else {
         setError(content[language].error);
       }
-    } catch {
+    } catch (error) {
+      console.error('Login error:', error);
       setError(content[language].error);
     } finally {
       setIsLoading(false);
@@ -87,21 +95,38 @@ export default function AdminLoginPage() {
             <label htmlFor="password" className="block text-sm font-medium mb-2">
               {content[language].password}
             </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder={content[language].passwordPlaceholder}
-              className="w-full px-4 py-2 rounded-md border bg-background"
-              required
-              disabled={isLoading}
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder={content[language].passwordPlaceholder}
+                className="w-full px-4 py-2 rounded-md border bg-background pr-12"
+                required
+                disabled={isLoading}
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? content[language].hidePassword : content[language].showPassword}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4 text-muted-foreground" />
+                ) : (
+                  <Eye className="h-4 w-4 text-muted-foreground" />
+                )}
+              </Button>
+            </div>
           </div>
 
-          <button
+          <Button
             type="submit"
-            className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full"
+            size="lg"
             disabled={isLoading}
           >
             {isLoading ? (
@@ -112,7 +137,7 @@ export default function AdminLoginPage() {
             ) : (
               content[language].login
             )}
-          </button>
+          </Button>
         </form>
       </div>
     </main>
