@@ -1,9 +1,12 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useLanguage } from '@/lib/context/language';
-import Link from 'next/link';
-import { toast } from 'sonner';
+import { useLanguage } from "@/lib/context/language";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { IProject } from "@/lib/models/Project";
+import { useState, useEffect } from "react";
+import { LoadingSpinner } from "@/components/ui/loading";
+import { Plus, Pencil, Trash2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,230 +18,162 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-interface Project {
-  _id: string;
-  title: string;
-  description: string;
-  technologies: string[];
-  githubUrl: string;
-  liveUrl?: string;
-  featured: boolean;
-  order: number;
-}
-
-export default function AdminProjectsPage() {
+export default function ProjectsPage() {
   const { language } = useLanguage();
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
+  const router = useRouter();
+  const [projects, setProjects] = useState<IProject[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<IProject | null>(null);
 
-  const content = useMemo(() => ({
+  const content = {
     tr: {
       title: 'Projeler',
       addNew: 'Yeni Proje Ekle',
-      table: {
-        title: 'Başlık',
-        description: 'Açıklama',
-        technologies: 'Teknolojiler',
-        actions: 'İşlemler'
-      },
-      actions: {
-        edit: 'Düzenle',
-        delete: 'Sil'
-      },
-      messages: {
-        fetchSuccess: 'Projeler başarıyla yüklendi',
-        fetchError: 'Projeler yüklenirken bir hata oluştu',
-        deleteConfirm: 'Bu projeyi silmek istediğinize emin misiniz?',
-        deleteConfirmDescription: 'Bu işlem geri alınamaz. Proje kalıcı olarak silinecektir.',
-        deleteSuccess: 'Proje başarıyla silindi',
-        deleteError: 'Proje silinirken bir hata oluştu'
-      },
-      dialog: {
+      edit: 'Düzenle',
+      delete: 'Sil',
+      loading: 'Projeler yükleniyor...',
+      noProjects: 'Henüz proje eklenmemiş.',
+      deleteConfirm: {
+        title: 'Projeyi Sil',
+        description: 'Bu projeyi silmek istediğinize emin misiniz? Bu işlem geri alınamaz.',
         cancel: 'İptal',
         confirm: 'Evet, Sil'
-      },
-      noProjects: 'Henüz proje bulunmuyor.',
-      loading: 'Projeler yükleniyor...'
+      }
     },
     en: {
       title: 'Projects',
       addNew: 'Add New Project',
-      table: {
-        title: 'Title',
-        description: 'Description',
-        technologies: 'Technologies',
-        actions: 'Actions'
-      },
-      actions: {
-        edit: 'Edit',
-        delete: 'Delete'
-      },
-      messages: {
-        fetchSuccess: 'Projects loaded successfully',
-        fetchError: 'An error occurred while loading projects',
-        deleteConfirm: 'Are you sure you want to delete this project?',
-        deleteConfirmDescription: 'This action cannot be undone. The project will be permanently deleted.',
-        deleteSuccess: 'Project deleted successfully',
-        deleteError: 'An error occurred while deleting the project'
-      },
-      dialog: {
+      edit: 'Edit',
+      delete: 'Delete',
+      loading: 'Loading projects...',
+      noProjects: 'No projects added yet.',
+      deleteConfirm: {
+        title: 'Delete Project',
+        description: 'Are you sure you want to delete this project? This action cannot be undone.',
         cancel: 'Cancel',
         confirm: 'Yes, Delete'
-      },
-      noProjects: 'No projects found.',
-      loading: 'Loading projects...'
-    }
-  }), []);
-
-  const fetchProjects = useCallback(async () => {
-    try {
-      const response = await fetch('/api/projects');
-      const data = await response.json();
-      if (data.error) {
-        throw new Error(data.error);
       }
-      setProjects(data);
-    } catch {
-      toast.error(content[language].messages.fetchError);
-    } finally {
-      setLoading(false);
     }
-  }, [language, content]);
+  };
 
   useEffect(() => {
     fetchProjects();
-  }, [fetchProjects]);
+  }, []);
 
-  const handleDeleteClick = (project: Project) => {
+  const fetchProjects = async () => {
+    try {
+      const response = await fetch('/api/projects');
+      const data = await response.json();
+      setProjects(data);
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteClick = (project: IProject) => {
     setProjectToDelete(project);
-    setDeleteDialogOpen(true);
+    setShowDeleteDialog(true);
   };
 
   const handleDeleteConfirm = async () => {
     if (!projectToDelete) return;
 
     try {
-      const response = await fetch(`/api/projects/${projectToDelete._id}`, {
-        method: 'DELETE',
+      const response = await fetch(`/api/projects/${projectToDelete._id.toString()}`, {
+        method: 'DELETE'
       });
-      
-      if (!response.ok) {
-        throw new Error('Proje silinirken hata oluştu');
-      }
 
-      setProjects(projects.filter(project => project._id !== projectToDelete._id));
-      toast.success(content[language].messages.deleteSuccess);
+      if (response.ok) {
+        fetchProjects();
+      }
     } catch (error) {
-      console.error('Proje silinirken hata oluştu:', error);
-      toast.error(content[language].messages.deleteError);
+      console.error('Error deleting project:', error);
     } finally {
-      setDeleteDialogOpen(false);
+      setShowDeleteDialog(false);
       setProjectToDelete(null);
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
-      <main className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-16">
-          <div className="text-center">
-            {content[language].loading}
-          </div>
-        </div>
-      </main>
+      <div className="flex items-center justify-center min-h-[200px]">
+        <LoadingSpinner className="h-8 w-8" />
+        <span className="ml-2 text-muted-foreground">{content[language].loading}</span>
+      </div>
     );
   }
 
   return (
     <>
-      <main className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-16">
-          <div className="max-w-6xl mx-auto">
-            <div className="flex justify-between items-center mb-8">
-              <h1 className="text-4xl font-bold">{content[language].title}</h1>
-              <Link
-                href="/admin/projects/new"
-                className="px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-              >
-                {content[language].addNew}
-              </Link>
-            </div>
-
-            {projects.length > 0 ? (
-              <div className="bg-card rounded-lg overflow-hidden">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="text-left p-4">{content[language].table.title}</th>
-                      <th className="text-left p-4">{content[language].table.description}</th>
-                      <th className="text-left p-4">{content[language].table.technologies}</th>
-                      <th className="text-left p-4">{content[language].table.actions}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {projects.map((project) => (
-                      <tr key={project._id} className="border-b">
-                        <td className="p-4">{project.title}</td>
-                        <td className="p-4">{project.description}</td>
-                        <td className="p-4">
-                          <div className="flex flex-wrap gap-2">
-                            {project.technologies.map((tech, index) => (
-                              <span
-                                key={index}
-                                className="px-2 py-1 bg-accent text-accent-foreground rounded-full text-sm"
-                              >
-                                {tech}
-                              </span>
-                            ))}
-                          </div>
-                        </td>
-                        <td className="p-4">
-                          <div className="flex gap-2">
-                            <Link
-                              href={`/admin/projects/${project._id}`}
-                              className="px-3 py-1 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-                            >
-                              {content[language].actions.edit}
-                            </Link>
-                            <button
-                              onClick={() => handleDeleteClick(project)}
-                              className="px-3 py-1 bg-destructive text-destructive-foreground rounded-md hover:bg-destructive/90 transition-colors"
-                            >
-                              {content[language].actions.delete}
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div className="text-center py-12 text-muted-foreground">
-                {content[language].noProjects}
-              </div>
-            )}
-          </div>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-bold">{content[language].title}</h1>
+          <Button
+            onClick={() => router.push('/admin/projects/new')}
+            className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+          >
+            <Plus className="h-4 w-4" />
+            {content[language].addNew}
+          </Button>
         </div>
-      </main>
 
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        {projects.length === 0 ? (
+          <p className="text-muted-foreground text-center py-8">{content[language].noProjects}</p>
+        ) : (
+          <div className="grid gap-4">
+            {projects.map((project) => (
+              <div
+                key={project._id.toString()}
+                className="p-4 rounded-lg border bg-card text-card-foreground"
+              >
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-semibold">{project.title}</h2>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      onClick={() => router.push(`/admin/projects/${project._id.toString()}`)}
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center gap-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                    >
+                      <Pencil className="h-4 w-4" />
+                      {content[language].edit}
+                    </Button>
+                    <Button
+                      onClick={() => handleDeleteClick(project)}
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      {content[language].delete}
+                    </Button>
+                  </div>
+                </div>
+                <p className="mt-2 text-muted-foreground">{project.description}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{content[language].messages.deleteConfirm}</AlertDialogTitle>
+            <AlertDialogTitle>{content[language].deleteConfirm.title}</AlertDialogTitle>
             <AlertDialogDescription>
-              {content[language].messages.deleteConfirmDescription}
+              {content[language].deleteConfirm.description}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{content[language].dialog.cancel}</AlertDialogCancel>
+            <AlertDialogCancel>{content[language].deleteConfirm.cancel}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteConfirm}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="bg-red-600 hover:bg-red-700"
             >
-              {content[language].dialog.confirm}
+              {content[language].deleteConfirm.confirm}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
