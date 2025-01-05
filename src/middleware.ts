@@ -20,8 +20,17 @@ export function middleware(request: NextRequest) {
   const isLoginPath = request.nextUrl.pathname === '/admin/login';
   const token = request.cookies.get('token')?.value;
 
+  // Eğer admin sayfasına gidiliyorsa ve login sayfasında değilsek ve token yoksa
   if (isAdminPath && !isLoginPath && !token) {
-    return NextResponse.redirect(new URL('/admin/login', request.url));
+    // Mevcut URL'yi kaydet
+    const url = new URL('/admin/login', request.url);
+    url.searchParams.set('callbackUrl', request.nextUrl.pathname);
+    return NextResponse.redirect(url);
+  }
+
+  // Eğer login sayfasındaysak ve token varsa, admin panele yönlendir
+  if (isLoginPath && token) {
+    return NextResponse.redirect(new URL('/admin', request.url));
   }
 
   // Admin sayfaları için header'ı değiştir

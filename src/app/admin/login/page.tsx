@@ -1,18 +1,27 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useLanguage } from '@/lib/context/language';
 import Cookies from 'js-cookie';
 import { LoadingSpinner } from "@/components/ui/loading";
 
 export default function AdminLoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { language } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Token varsa ve callback URL yoksa admin panele yönlendir
+  useEffect(() => {
+    const token = Cookies.get('token');
+    if (token && !searchParams.get('callbackUrl')) {
+      router.push('/admin');
+    }
+  }, [router, searchParams]);
 
   const content = {
     tr: {
@@ -44,7 +53,10 @@ export default function AdminLoginPage() {
       if (email === 'admin@portfolio.com' && password === 'Portfolio2025!') {
         const token = btoa(email + ':' + new Date().getTime());
         Cookies.set('token', token, { expires: 7 });
-        router.push('/admin/projects');
+        
+        // Callback URL varsa oraya, yoksa admin panele yönlendir
+        const callbackUrl = searchParams.get('callbackUrl');
+        router.push(callbackUrl || '/admin');
         router.refresh();
       } else {
         setError(content[language].error);
