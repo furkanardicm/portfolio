@@ -8,11 +8,17 @@ import Cookies from 'js-cookie';
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { LanguageToggle } from "@/components/ui/LanguageToggle";
 import { Home, FolderKanban, FileText, Settings } from 'lucide-react';
+import { useEffect, useState } from "react";
 
 export default function AdminHeader() {
   const { language } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const content = {
     tr: {
@@ -44,6 +50,8 @@ export default function AdminHeader() {
     Cookies.remove('token');
     router.replace('/admin/login');
   };
+
+  const hasToken = mounted ? !!Cookies.get('token') : false;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -78,13 +86,15 @@ export default function AdminHeader() {
           >
             {content[language].backToSite}
           </Link>
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={handleLogout}
-          >
-            {content[language].logout}
-          </Button>
+          {mounted && hasToken && (
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleLogout}
+            >
+              {content[language].logout}
+            </Button>
+          )}
         </div>
       </div>
     </header>
