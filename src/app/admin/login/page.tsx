@@ -44,8 +44,7 @@ export default function AdminLoginPage() {
       if (email === 'admin@portfolio.com' && password === 'Portfolio2025!') {
         const token = btoa(email + ':' + new Date().getTime());
         Cookies.set('token', token, { expires: 7 });
-        router.push('/admin');
-        router.refresh();
+        router.replace('/admin');
       } else {
         setError(content[language].error);
       }

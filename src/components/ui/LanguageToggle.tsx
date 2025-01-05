@@ -1,17 +1,19 @@
 'use client';
 
-import { useLanguage } from '@/lib/context/language';
-import { Languages } from 'lucide-react';
+import { useLanguage } from "@/lib/context/language";
+import { Button } from "@/components/ui/button";
 
 export function LanguageToggle() {
   const { language, setLanguage } = useLanguage();
 
   return (
-    <button
+    <Button
+      variant="ghost"
+      size="sm"
       onClick={() => setLanguage(language === 'tr' ? 'en' : 'tr')}
-      className="text-muted-foreground hover:text-foreground transition-colors"
+      className="font-medium"
     >
-      <Languages className="h-5 w-5" />
-    </button>
+      {language === 'tr' ? 'EN' : 'TR'}
+    </Button>
   );
 } 
