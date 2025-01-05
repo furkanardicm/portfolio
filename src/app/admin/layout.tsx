@@ -1,6 +1,7 @@
 'use client';
 
 import AdminHeader from "@/components/admin/header";
+import { ScrollProgress } from "@/components/ui/ScrollProgress";
 
 export default function AdminLayout({
   children,
@@ -9,6 +10,7 @@ export default function AdminLayout({
 }) {
   return (
     <div className="min-h-screen bg-background">
+      <ScrollProgress />
       <AdminHeader />
       <main className="container py-6">
         {children}
