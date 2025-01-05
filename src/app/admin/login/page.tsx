@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/lib/context/language';
 import Cookies from 'js-cookie';
 import { LoadingSpinner } from "@/components/ui/loading";
@@ -9,7 +8,6 @@ import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function AdminLoginPage() {
-  const router = useRouter();
   const { language } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -50,8 +48,8 @@ export default function AdminLoginPage() {
     try {
       if (email === 'admin@portfolio.com' && password === 'Portfolio2025!') {
         const token = btoa(email + ':' + new Date().getTime());
-        Cookies.set('token', token, { expires: 7 });
-        await router.replace('/admin');
+        Cookies.set('token', token, { expires: 7, path: '/' });
+        window.location.href = '/admin';
       } else {
         setError(content[language].error);
       }
